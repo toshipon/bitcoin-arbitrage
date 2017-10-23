@@ -6,7 +6,7 @@ require_relative 'lib/zaif'
 require_relative 'lib/bitflyer'
 
 def output msg
-  if ENV['RUN_ON_HEROKU'].nil?
+  if ENV['SLACK_WEBHOOK_URL'].nil?
     p msg
   else
     slack = Slack::Incoming::Webhooks.new ENV['SLACK_WEBHOOK_URL']

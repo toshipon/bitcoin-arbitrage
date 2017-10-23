@@ -26,7 +26,8 @@
       "description": "Amout of trading BTC value"
     },
     "SLACK_WEBHOOK_URL": {
-      "description": "Slack incoming webhook url"
+      "description": "Slack incoming webhook url",
+      "required": false
     },
     "RUN_ON_HEROKU": {
       "description": "A flag to be able to run on heroku",
