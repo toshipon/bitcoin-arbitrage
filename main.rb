@@ -30,6 +30,7 @@ end
 def trading bidc, askc, trade_amount
   bid = bidc.bid
   ask = bidc.ask
+  output "#{bidc.service} => #{askc.service}"
   if profit?(trade_amount, bid, ask) &&
       bidc.has_jpy?(bid, trade_amount) &&
       askc.has_btc?(trade_amount)
@@ -37,7 +38,9 @@ def trading bidc, askc, trade_amount
     # bidc.buy(bid, trade_amount)
     output "Selling #{trade_amount}BTC #{(ask*trade_amount).floor}JPY in #{askc.service}"
     # askc.sell(ask, trade_amount)
-    output "Profit #{((ask-bid) * margin).floor}JPY"
+    output "*Profit* #{((ask-bid) * trade_amount).floor}JPY"
+  else
+    output "No enough profit #{((ask-bid) * trade_amount).floor}JPY"
   end
 end
 
@@ -49,11 +52,22 @@ def run
   output "Trading amount: #{trade_amount}BTC"
   output "Minimum valume: #{ENV['MIN_VOLUME_JPY']}JPY"
 
-  output generate_stat zc
-  output generate_stat cc
+  clients = {
+    :coincheck => CoincheckWrapper.new(ENV['COINCHECK_KEY'], ENV['COINCHECK_SECRET']),
+    :zaif => ZaifWrapper.new(ENV['ZAIF_KEY'], ENV['ZAIF_SECRET'])
+  }
 
-  trading zc, cc, trade_amount
-  trading cc, zc, trade_amount
+  clients.each_value do |client|
+    output generate_stat client
+  end
+
+  clients.each do |bidk, bidc|
+    clients.each do |askk, askc|
+      if bidk != askk
+        trading bidc, askc, trade_amount
+      end
+    end
+  end
 end
 
 if ENV['RUN_ON_HEROKU'].nil?
