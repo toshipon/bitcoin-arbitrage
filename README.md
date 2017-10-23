@@ -2,6 +2,7 @@
 
 # Setup
 
+- Add enough BTC, JPY credits on each exchange services.
 - Click above heroku deploy button, and fill env.
 - Add scheduler script with `ruby main.rb` for every 10mins or hours
 
