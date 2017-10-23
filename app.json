@@ -2,5 +2,25 @@
   "name": "Bitcon arbitrage",
   "description": "Bitcoin trading bot with arbitrage",
   "repository": "https://github.com/toshipon/bitcoin-arbitrage",
-  "keywords": ["ruby", "bitcoin", "arbitrage"]
+  "keywords": ["ruby", "bitcoin", "arbitrage"],
+  "env": {
+    "ZAIF_KEY": {
+      "description": "Zaif API public key",
+    },
+    "ZAIF_SECRET": {
+      "description": "Zaif API secret key",
+    },
+    "COINCHECK_KEY": {
+      "description": "Coincheck API public key",
+    },
+    "COINCHECK_SECRET": {
+      "description": "Coincheck API secret key",
+    },
+    "TRADE_AMOUNT": {
+      "description": "Amout of trading BTC value",
+    },
+    "SLACK_WEBHOOK_URL": {
+      "description": "Slack incoming webhook url",
+    }
+  }
 }
