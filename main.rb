@@ -3,15 +3,15 @@ require 'zaif'
 require 'ruby_coincheck_client'
 require 'slack/incoming/webhooks'
 
-# zaif_client.bid("btc", 30760, 0.0001)
-# zaif_client.ask("btc", 30320, 0.0001)
 # p zaif_client.get_info
 
-def output r
-  p "   bid: #{r['bid']}"
-  p "   ask: #{r['ask']}"
-  # p "   high: #{r['high']}"
-  # p "   low: #{r['low']}"
+def output title, r
+  result = <<"EOS"
+*#{title}*
+   bid: #{r['bid']}
+   ask: #{r['ask']}
+EOS
+  result
 end
 
 def profit? trade_amount, bid, ask, fee
@@ -21,20 +21,17 @@ end
 
 def run
   trade_amount = ENV['TRADE_AMOUNT'].to_f
-  p "trading amount: #{trade_amount}"
   zaif_client = Zaif::API.new(:api_key => ENV['ZAIF_KEY'], :api_secret => ENV['ZAIF_SECRET'])
   coincheck_client = CoincheckClient.new(ENV['COINCHECK_KEY'], ENV['COINCHECK_SECRET'])
   slack = Slack::Incoming::Webhooks.new ENV['SLACK_WEBHOOK_URL']
 
+  slack.post "trading amount: #{trade_amount}BTC"
+
   zr = zaif_client.get_ticker("btc")
-  p "Zaif BTC/JPY"
-  output zr
+  slack.post output "Zaif BTC/JPY", zr
 
   cr = JSON.parse(coincheck_client.read_ticker.body)
-  p "Coincheck BTC/JPY"
-  output cr
-
-  p "========================"
+  slack.post output "Coincheck BTC/JPY", cr
 
   if profit? trade_amount, zr['bid'], cr['ask'], -0.01
     slack.post "Buying  #{trade_amount}BTC #{(zr['bid']*trade_amount).floor(2)}JPY in Zaif"
@@ -54,7 +51,7 @@ end
 if ENV['RUN_ON_HEROKU'].nil?
   loop do
     run
-    sleep(1)
+    sleep(5)
   end
 else
   run
