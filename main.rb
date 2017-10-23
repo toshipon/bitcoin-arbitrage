@@ -13,11 +13,11 @@ def output msg
   end
 end
 
-def generate_stat service, r
+def generate_stat c
   result = <<"EOS"
-*#{service} BTC/JPY*
-   bid: #{r['bid']}
-   ask: #{r['ask']}
+*#{c.service} BTC/JPY*
+   bid: #{c.bid}
+   ask: #{c.ask}
 EOS
   result
 end
@@ -27,7 +27,9 @@ def profit? trade_amount, bid, ask
   (trade_amount * margin).floor - ENV['MIN_VOLUME_JPY'].to_f > 0
 end
 
-def trading bidc, bid, askc, ask, trade_amount
+def trading bidc, askc, trade_amount
+  bid = bidc.bid
+  ask = bidc.ask
   if profit?(trade_amount, bid, ask) &&
       bidc.has_jpy?(bid, trade_amount) &&
       askc.has_btc?(trade_amount)
@@ -47,13 +49,11 @@ def run
   output "Trading amount: #{trade_amount}BTC"
   output "Minimum valume: #{ENV['MIN_VOLUME_JPY']}JPY"
 
-  zr = zc.ticker
-  output generate_stat zc.service, zc.ticker
-  cr = cc.ticker
-  output generate_stat cc.service, cr
+  output generate_stat zc
+  output generate_stat cc
 
-  trading zc, zr['bid'], cc, cr['ask'], trade_amount
-  trading cc, cr['bid'], zc, zr['ask'], trade_amount
+  trading zc, cc, trade_amount
+  trading cc, zc, trade_amount
 end
 
 if ENV['RUN_ON_HEROKU'].nil?

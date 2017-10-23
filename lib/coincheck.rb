@@ -21,6 +21,14 @@ class CoincheckWrapper
     JSON.parse(@client.read_balance.body)['jpy'].to_f >= rate * trading_amount
   end
 
+  def bid
+    ticker['bid']
+  end
+
+  def ask
+    ticker['ask']
+  end
+
   def sell ask, trading_amount
     @client.create_orders(rate: ask, amount: trade_amount, order_type: "sell")
   end

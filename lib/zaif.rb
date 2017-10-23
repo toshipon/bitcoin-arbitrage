@@ -21,6 +21,14 @@ class ZaifWrapper
     @client.get_info['deposit']['jpy'] >= rate * trading_amount
   end
 
+  def bid
+    ticker['bid']
+  end
+
+  def ask
+    ticker['ask']
+  end
+
   def sell ask, trading_amount
     @client.create_orders(rate: ask, amount: trade_amount, order_type: "sell")
   end
