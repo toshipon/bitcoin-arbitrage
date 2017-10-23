@@ -33,23 +33,24 @@ def trading bidc, askc, trade_amount
   ask = bidc.ask
 
   if profit?(trade_amount, bid, ask)
-    unless bidc.has_jpy?(bid, trade_amount)
-      output "*#{bidc.service} wallet doesn't have #{(bid*trade_amount).floor}JPY*"
-      return
-    end
-
-    unless askc.has_btc?(trade_amount)
-      output "*#{askc.service} wallet doesn't have #{trade_amount}BTC*"
-      return
-    end
-
     output <<"EOS"
 *#{bidc.service} => #{askc.service}*
 Buying  #{trade_amount}BTC #{(bid*trade_amount).floor}JPY in #{bidc.service}
 Selling #{trade_amount}BTC #{(ask*trade_amount).floor}JPY in #{askc.service}
 <!here> *Profit* #{((ask-bid) * trade_amount).floor}JPY
 EOS
+
     if ENV['RUN_TRADING'] == 'on'
+      unless bidc.has_jpy?(bid, trade_amount)
+        output "*#{bidc.service} wallet doesn't have #{(bid*trade_amount).floor}JPY*"
+        return
+      end
+
+      unless askc.has_btc?(trade_amount)
+        output "*#{askc.service} wallet doesn't have #{trade_amount}BTC*"
+        return
+      end
+
       bidc.buy(bid, trade_amount)
       askc.sell(ask, trade_amount)
     end
