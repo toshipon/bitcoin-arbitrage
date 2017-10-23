@@ -14,8 +14,8 @@ EOS
   result
 end
 
-def profit? trade_amount, bid, ask, fee
-  margin = bid * (1 - fee) - ask
+def profit? trade_amount, bid, ask
+  margin = ask - bid
   (trade_amount * margin).floor > 0
 end
 
@@ -33,18 +33,20 @@ def run
   cr = JSON.parse(coincheck_client.read_ticker.body)
   slack.post output "Coincheck BTC/JPY", cr
 
-  if profit? trade_amount, zr['bid'], cr['ask'], -0.01
-    slack.post "Buying  #{trade_amount}BTC #{(zr['bid']*trade_amount).floor(2)}JPY in Zaif"
+  if profit? trade_amount, zr['bid'], cr['ask']
+    slack.post "Buying  #{trade_amount}BTC #{(zr['bid']*trade_amount).floor}JPY in Zaif"
     # zaif_client.bid("btc", zr['bid'], trade_amount)
-    slack.post  "Selling #{trade_amount}BTC #{(cr['ask']*trade_amount).floor(2)}JPY in Coincheck"
+    slack.post "Selling #{trade_amount}BTC #{(cr['ask']*trade_amount).floor}JPY in Coincheck"
     # coincheck_client.create_orders(rate: cr['ask'], amount: trade_amount, order_type: "sell")
+    slack.post "Profit #{((cr['ask']-zr['bid']) * margin).floor}JPY"
   end
 
-  if profit? trade_amount, cr['bid'], zr['ask'], 0
-    slack.post  "Buying  #{trade_amount}BTC #{(cr['bid']*trade_amount).floor(2)}JPY in Coincheck"
+  if profit? trade_amount, cr['bid'], zr['ask']
+    slack.post "Buying  #{trade_amount}BTC #{(cr['bid']*trade_amount).floor}JPY in Coincheck"
     # coincheck_client.create_orders(rate: zr['bid'], amount: trade_amount, order_type: "buy")
-    slack.post  "Selling #{trade_amount}BTC #{(zr['ask']*trade_amount).floor(2)}JPY in Zaif"
+    slack.post "Selling #{trade_amount}BTC #{(zr['ask']*trade_amount).floor}JPY in Zaif"
     # zaif_client.ask("btc", zr['ask'], trade_amount)
+    slack.post "*Profit* #{((zr['ask']-cr['bid']) * trade_amount).floor}JPY"
   end
 end
 
