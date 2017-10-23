@@ -46,7 +46,7 @@ def run
     # coincheck_client.create_orders(rate: zr['bid'], amount: trade_amount, order_type: "buy")
     slack.post "Selling #{trade_amount}BTC #{(zr['ask']*trade_amount).floor}JPY in Zaif"
     # zaif_client.ask("btc", zr['ask'], trade_amount)
-    slack.post "@here *Profit* #{((zr['ask']-cr['bid']) * trade_amount).floor}JPY"
+    slack.post "<!here> *Profit* #{((zr['ask']-cr['bid']) * trade_amount).floor}JPY"
   end
 end
 
