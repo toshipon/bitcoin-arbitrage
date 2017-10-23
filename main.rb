@@ -46,9 +46,6 @@ end
 
 def run
   trade_amount = ENV['TRADE_AMOUNT'].to_f
-  zc = ZaifWrapper.new ENV['ZAIF_KEY'], ENV['ZAIF_SECRET']
-  cc = CoincheckWrapper.new ENV['COINCHECK_KEY'], ENV['COINCHECK_SECRET']
-
   output "Trading amount: #{trade_amount}BTC"
   output "Minimum valume: #{ENV['MIN_VOLUME_JPY']}JPY"
 
