@@ -63,6 +63,8 @@ def run
   output "Trading amount: #{trade_amount}BTC"
   output "Minimum valume: #{ENV['MIN_VOLUME_JPY']}JPY"
 
+  output "================"
+
   clients = {
     :coincheck => CoincheckWrapper.new(ENV['COINCHECK_KEY'], ENV['COINCHECK_SECRET']),
     :zaif => ZaifWrapper.new(ENV['ZAIF_KEY'], ENV['ZAIF_SECRET']),
@@ -73,6 +75,8 @@ def run
     output generate_stat client
   end
 
+  output "================"
+
   clients.each do |bidk, bidc|
     clients.each do |askk, askc|
       if bidk != askk
@@ -80,6 +84,8 @@ def run
       end
     end
   end
+
+  output "================"
 end
 
 if ENV['RUN_ON_HEROKU'].nil?
