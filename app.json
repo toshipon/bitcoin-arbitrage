@@ -21,6 +21,10 @@
     },
     "SLACK_WEBHOOK_URL": {
       "description": "Slack incoming webhook url"
+    },
+    "RUN_ON_HEROKU" : {
+      "description": "A flag to be able to run on heroku",
+      "value": "on"
     }
   },
   "addons": [
