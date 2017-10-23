@@ -4,3 +4,7 @@
 
 - Click above heroku deploy button, and fill env.
 - Add scheduler script with `ruby main.rb` for every 10mins or hours
+
+# Donate
+
+- `12C1yetoPBB1MJcDxn6qSiY3iJeNozoXVF` :)
