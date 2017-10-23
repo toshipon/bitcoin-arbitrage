@@ -22,9 +22,13 @@
     "SLACK_WEBHOOK_URL": {
       "description": "Slack incoming webhook url"
     },
-    "RUN_ON_HEROKU" : {
+    "RUN_ON_HEROKU": {
       "description": "A flag to be able to run on heroku",
       "value": "on"
+    },
+    "MIN_VOLUME_JPY": {
+      "description": "Minimum valume how much margin exists",
+      "value": "10"
     }
   },
   "addons": [
