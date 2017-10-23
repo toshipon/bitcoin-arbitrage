@@ -24,9 +24,6 @@
     }
   },
   "addons": [
-    "scheduler",
-    {
-      "plan": "scheduler"
-    }
+    "scheduler"
   ]
 }
