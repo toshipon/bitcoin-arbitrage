@@ -1,0 +1,6 @@
+{
+  "name": "Bitcon arbitrage",
+  "description": "Bitcoin trading bot with arbitrage",
+  "repository": "https://github.com/toshipon/bitcoin-arbitrage",
+  "keywords": ["ruby", "bitcoin", "arbitrage"]
+}
