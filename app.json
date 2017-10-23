@@ -5,22 +5,22 @@
   "keywords": ["ruby", "bitcoin", "arbitrage"],
   "env": {
     "ZAIF_KEY": {
-      "description": "Zaif API public key",
+      "description": "Zaif API public key"
     },
     "ZAIF_SECRET": {
-      "description": "Zaif API secret key",
+      "description": "Zaif API secret key"
     },
     "COINCHECK_KEY": {
-      "description": "Coincheck API public key",
+      "description": "Coincheck API public key"
     },
     "COINCHECK_SECRET": {
-      "description": "Coincheck API secret key",
+      "description": "Coincheck API secret key"
     },
     "TRADE_AMOUNT": {
-      "description": "Amout of trading BTC value",
+      "description": "Amout of trading BTC value"
     },
     "SLACK_WEBHOOK_URL": {
-      "description": "Slack incoming webhook url",
+      "description": "Slack incoming webhook url"
     }
   },
   "addons": [
