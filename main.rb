@@ -34,11 +34,12 @@ def trading bidc, askc, trade_amount
   if profit?(trade_amount, bid, ask) &&
       bidc.has_jpy?(bid, trade_amount) &&
       askc.has_btc?(trade_amount)
+    output "*#{bidc.service} => #{askc.service}*"
     output "Buying  #{trade_amount}BTC #{(bid*trade_amount).floor}JPY in #{bidc.service}"
     # bidc.buy(bid, trade_amount)
     output "Selling #{trade_amount}BTC #{(ask*trade_amount).floor}JPY in #{askc.service}"
     # askc.sell(ask, trade_amount)
-    output "*Profit* #{((ask-bid) * trade_amount).floor}JPY"
+    output "<!here> *Profit* #{((ask-bid) * trade_amount).floor}JPY"
   else
     output "*#{bidc.service} => #{askc.service}*: no enough profit #{((ask-bid) * trade_amount).floor}JPY"
   end
