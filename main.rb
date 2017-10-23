@@ -3,6 +3,7 @@ require 'slack/incoming/webhooks'
 
 require_relative 'lib/coincheck'
 require_relative 'lib/zaif'
+require_relative 'lib/bitflyer'
 
 def output msg
   if ENV['RUN_ON_HEROKU'].nil?
@@ -50,7 +51,8 @@ def run
 
   clients = {
     :coincheck => CoincheckWrapper.new(ENV['COINCHECK_KEY'], ENV['COINCHECK_SECRET']),
-    :zaif => ZaifWrapper.new(ENV['ZAIF_KEY'], ENV['ZAIF_SECRET'])
+    :zaif => ZaifWrapper.new(ENV['ZAIF_KEY'], ENV['ZAIF_SECRET']),
+    :bitflyer => BitflyerWrapper.new(ENV['BITFLYER_KEY'], ENV['BITFLYER_SECRET'])
   }
 
   clients.each_value do |client|
