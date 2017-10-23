@@ -31,9 +31,18 @@ end
 def trading bidc, askc, trade_amount
   bid = bidc.bid
   ask = bidc.ask
-  if profit?(trade_amount, bid, ask) &&
-      bidc.has_jpy?(bid, trade_amount) &&
-      askc.has_btc?(trade_amount)
+
+  if profit?(trade_amount, bid, ask)
+    if bidc.has_jpy?(bid, trade_amount)
+      output "*#{bidc.service} doesn't have #{bid*trade_amount}JPY*"
+      return
+    end
+
+    if askc.has_btc?(trade_amount)
+      output "*#{askc.service} doesn't have #{trade_amount}BTC*"
+      return
+    end
+
     output "*#{bidc.service} => #{askc.service}*"
     output "Buying  #{trade_amount}BTC #{(bid*trade_amount).floor}JPY in #{bidc.service}"
     # bidc.buy(bid, trade_amount)
