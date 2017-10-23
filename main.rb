@@ -30,7 +30,6 @@ end
 def trading bidc, askc, trade_amount
   bid = bidc.bid
   ask = bidc.ask
-  output "#{bidc.service} => #{askc.service}"
   if profit?(trade_amount, bid, ask) &&
       bidc.has_jpy?(bid, trade_amount) &&
       askc.has_btc?(trade_amount)
@@ -40,7 +39,7 @@ def trading bidc, askc, trade_amount
     # askc.sell(ask, trade_amount)
     output "*Profit* #{((ask-bid) * trade_amount).floor}JPY"
   else
-    output "No enough profit #{((ask-bid) * trade_amount).floor}JPY"
+    output "*#{bidc.service} => #{askc.service}*: no enough profit #{((ask-bid) * trade_amount).floor}JPY"
   end
 end
 
