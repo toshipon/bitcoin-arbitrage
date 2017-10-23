@@ -33,6 +33,10 @@
       "description": "A flag to be able to run on heroku",
       "value": "on"
     },
+    "RUN_TRADING": {
+      "description": "Run actual trading when you put 'on'",
+      "value": "off"
+    },
     "MIN_VOLUME_JPY": {
       "description": "Minimum valume how much margin exists",
       "value": "10"

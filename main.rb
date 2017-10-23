@@ -33,22 +33,26 @@ def trading bidc, askc, trade_amount
   ask = bidc.ask
 
   if profit?(trade_amount, bid, ask)
-    if bidc.has_jpy?(bid, trade_amount)
-      output "*#{bidc.service} doesn't have #{bid*trade_amount}JPY*"
+    unless bidc.has_jpy?(bid, trade_amount)
+      output "*#{bidc.service} doesn't have #{(bid*trade_amount).floor}JPY*"
       return
     end
 
-    if askc.has_btc?(trade_amount)
+    unless askc.has_btc?(trade_amount)
       output "*#{askc.service} doesn't have #{trade_amount}BTC*"
       return
     end
 
-    output "*#{bidc.service} => #{askc.service}*"
-    output "Buying  #{trade_amount}BTC #{(bid*trade_amount).floor}JPY in #{bidc.service}"
-    # bidc.buy(bid, trade_amount)
-    output "Selling #{trade_amount}BTC #{(ask*trade_amount).floor}JPY in #{askc.service}"
-    # askc.sell(ask, trade_amount)
-    output "<!here> *Profit* #{((ask-bid) * trade_amount).floor}JPY"
+    output <<"EOS"
+*#{bidc.service} => #{askc.service}*
+Buying  #{trade_amount}BTC #{(bid*trade_amount).floor}JPY in #{bidc.service}
+Selling #{trade_amount}BTC #{(ask*trade_amount).floor}JPY in #{askc.service}
+<!here> *Profit* #{((ask-bid) * trade_amount).floor}JPY
+EOS
+    if ENV['RUN_TRADING'] == 'on'
+      bidc.buy(bid, trade_amount)
+      askc.sell(ask, trade_amount)
+    end
   else
     output "*#{bidc.service} => #{askc.service}*: no enough profit #{((ask-bid) * trade_amount).floor}JPY"
   end
