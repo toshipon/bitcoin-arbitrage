@@ -22,5 +22,11 @@
     "SLACK_WEBHOOK_URL": {
       "description": "Slack incoming webhook url",
     }
-  }
+  },
+  "addons": [
+    "scheduler",
+    {
+      "plan": "scheduler"
+    }
+  ]
 }
