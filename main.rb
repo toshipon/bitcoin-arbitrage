@@ -92,7 +92,7 @@ end
 if ENV['RUN_ON_HEROKU'].nil?
   loop do
     run
-    sleep(5)
+    sleep(60*10) # 10mins
   end
 else
   run
