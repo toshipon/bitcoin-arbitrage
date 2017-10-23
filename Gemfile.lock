@@ -1,0 +1,19 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    dotenv (2.2.1)
+    ruby_coincheck_client (0.1.4)
+    slack-incoming-webhooks (0.2.0)
+    zaif (0.0.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  dotenv
+  ruby_coincheck_client
+  slack-incoming-webhooks
+  zaif
+
+BUNDLED WITH
+   1.14.6
