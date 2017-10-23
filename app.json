@@ -16,6 +16,12 @@
     "COINCHECK_SECRET": {
       "description": "Coincheck API secret key"
     },
+    "BITFLYER_KEY": {
+      "description": "Bitflyer API public key"
+    },
+    "BITFLYER_SECRET": {
+      "description": "Bitflyer API secret key"
+    },
     "TRADE_AMOUNT": {
       "description": "Amout of trading BTC value"
     },
