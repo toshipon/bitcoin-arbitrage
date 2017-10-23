@@ -7,7 +7,7 @@ require_relative 'lib/bitflyer'
 
 def output msg
   if ENV['SLACK_WEBHOOK_URL'].nil?
-    p msg
+    puts msg
   else
     slack = Slack::Incoming::Webhooks.new ENV['SLACK_WEBHOOK_URL']
     slack.post msg
