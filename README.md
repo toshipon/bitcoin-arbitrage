@@ -8,3 +8,9 @@
 # Donate
 
 - `12C1yetoPBB1MJcDxn6qSiY3iJeNozoXVF` :)
+
+# Support exchanges
+
+- [Coincheck](https://coincheck.com/?c=3Mzi75LQlbk)
+- [Zaif](https://zaif.jp/)
+- [Bitflyer](https://bitflyer.jp?bf=kgfo4q2f)
