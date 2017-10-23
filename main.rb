@@ -34,12 +34,12 @@ def trading bidc, askc, trade_amount
 
   if profit?(trade_amount, bid, ask)
     unless bidc.has_jpy?(bid, trade_amount)
-      output "*#{bidc.service} doesn't have #{(bid*trade_amount).floor}JPY*"
+      output "*#{bidc.service} wallet doesn't have #{(bid*trade_amount).floor}JPY*"
       return
     end
 
     unless askc.has_btc?(trade_amount)
-      output "*#{askc.service} doesn't have #{trade_amount}BTC*"
+      output "*#{askc.service} wallet doesn't have #{trade_amount}BTC*"
       return
     end
 
