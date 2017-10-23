@@ -62,7 +62,7 @@ end
 def run
   trade_amount = ENV['TRADE_AMOUNT'].to_f
   output "Trading amount: #{trade_amount}BTC"
-  output "Minimum valume: #{ENV['MIN_VOLUME_JPY']}JPY"
+  output "Minimum volume: #{ENV['MIN_VOLUME_JPY']}JPY"
 
   output "================"
 
