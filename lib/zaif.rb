@@ -1,6 +1,9 @@
 require 'zaif'
 
 class ZaifWrapper
+  @_ticker = nil
+  @_balance = nil
+
   def initialize key, secret
     @client = Zaif::API.new(:api_key => key, :api_secret => secret)
   end
@@ -10,15 +13,18 @@ class ZaifWrapper
   end
 
   def ticker
-    @client.get_ticker("btc")
+    if @_ticker.nil?
+      @_ticker = @client.get_ticker("btc")
+    end
+    @_ticker
   end
 
   def has_btc? trading_amount
-    @client.get_info['deposit']['btc'] >= trading_amount
+    balance['btc'] >= trading_amount
   end
 
   def has_jpy? rate, trading_amount
-    @client.get_info['deposit']['jpy'] >= rate * trading_amount
+    balance['jpy'] >= rate * trading_amount
   end
 
   def bid
@@ -35,5 +41,14 @@ class ZaifWrapper
 
   def buy bid, trading_amount
     @client.create_orders(rate: bid, amount: trading_amount, order_type: "buy")
+  end
+
+  private
+
+  def balance
+    if @_balance.nil?
+      @_balance = @client.get_info['deposit']
+    end
+    @_balance
   end
 end

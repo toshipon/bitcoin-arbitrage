@@ -1,6 +1,9 @@
 require 'bitflyer'
 
 class BitflyerWrapper
+  @_ticker = nil
+  @_balance = nil
+
   def initialize key, secret
     @private_client = Bitflyer.http_private_client(key, secret)
     @public_client = Bitflyer.http_public_client
@@ -11,11 +14,14 @@ class BitflyerWrapper
   end
 
   def ticker
-    @public_client.ticker('BTC_JPY')
+    if @_ticker.nil?
+      @_ticker = @public_client.ticker('BTC_JPY')
+    end
+    @_ticker
   end
 
   def has_btc? trading_amount
-    @private_client.balance.each do |v|
+    balance.each do |v|
       if v['currency_code'] == 'BTC'
         return v['amount'] >= trading_amount
       end
@@ -24,7 +30,7 @@ class BitflyerWrapper
   end
 
   def has_jpy? rate, trading_amount
-    @private_client.balance.each do |v|
+    balance.each do |v|
       if v['currency_code'] == 'JPY'
         return v['amount'] >= rate * trading_amount
       end
@@ -58,5 +64,14 @@ class BitflyerWrapper
       price: bid,
       size: trading_amount
     )
+  end
+
+  private
+
+  def balance
+    if @_balance.nil?
+      @_balance = @private_client.balance
+    end
+    @_balance
   end
 end
