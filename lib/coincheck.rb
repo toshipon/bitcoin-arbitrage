@@ -19,12 +19,20 @@ class CoincheckWrapper
     @_ticker
   end
 
+  def get_balance_btc
+    balance['btc'].to_f
+  end
+
   def has_btc? trading_amount
-    balance['btc'].to_f >= trading_amount
+    get_balance_btc >= trading_amount
+  end
+
+  def get_balance_jpy
+    balance['jpy'].to_f
   end
 
   def has_jpy? rate, trading_amount
-    balance['jpy'].to_f >= rate * trading_amount
+    get_balance_jpy >= rate * trading_amount
   end
 
   def bid

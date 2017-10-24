@@ -19,12 +19,20 @@ class ZaifWrapper
     @_ticker
   end
 
+  def get_balance_btc
+    balance['btc']
+  end
+
   def has_btc? trading_amount
-    balance['btc'] >= trading_amount
+    get_balance_btc >= trading_amount
+  end
+
+  def get_balance_jpy
+    balance['jpy']
   end
 
   def has_jpy? rate, trading_amount
-    balance['jpy'] >= rate * trading_amount
+    get_balance_jpy >= rate * trading_amount
   end
 
   def bid

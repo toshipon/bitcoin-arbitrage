@@ -20,22 +20,30 @@ class BitflyerWrapper
     @_ticker
   end
 
-  def has_btc? trading_amount
+  def get_balance_btc
     balance.each do |v|
       if v['currency_code'] == 'BTC'
-        return v['amount'] >= trading_amount
+        return v['amount']
       end
     end
-    false
+    0
+  end
+
+  def has_btc? trading_amount
+    get_balance_btc >= trading_amount
+  end
+
+  def get_balance_jpy
+    balance.each do |v|
+      if v['currency_code'] == 'JPY'
+        return v['amount']
+      end
+    end
+    0
   end
 
   def has_jpy? rate, trading_amount
-    balance.each do |v|
-      if v['currency_code'] == 'JPY'
-        return v['amount'] >= rate * trading_amount
-      end
-    end
-    false
+    get_balance_jpy >= rate * trading_amount
   end
 
   def bid

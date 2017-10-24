@@ -19,6 +19,7 @@ def generate_stat c
 *#{c.service} BTC/JPY*
    bid: #{c.bid}
    ask: #{c.ask}
+   balance: #{c.get_balance_btc}BTC #{c.get_balance_jpy}JPY
 EOS
   result
 end
