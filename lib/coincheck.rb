@@ -43,6 +43,10 @@ class CoincheckWrapper
     ticker['ask']
   end
 
+  def last
+    ticker['last']
+  end
+
   def average_btc
     (bid + ask)/2
   end
