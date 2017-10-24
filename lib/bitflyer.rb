@@ -1,6 +1,7 @@
 require 'bitflyer'
 
 class BitflyerWrapper
+  @@minute_to_expire = 10 # Cancel order in 10mins
   @_ticker = nil
   @_balance = nil
 
@@ -60,7 +61,8 @@ class BitflyerWrapper
       child_order_type: 'LIMIT',
       side: 'SELL',
       price: ask,
-      size: trading_amount
+      size: trading_amount,
+      minute_to_expire: @@minute_to_expire
     )
   end
 
@@ -70,7 +72,8 @@ class BitflyerWrapper
       child_order_type: 'LIMIT',
       side: 'BUY',
       price: bid,
-      size: trading_amount
+      size: trading_amount,
+      minute_to_expire: @@minute_to_expire
     )
   end
 
