@@ -1,7 +1,7 @@
 require 'bitflyer'
 
 class BitflyerWrapper
-  @@minute_to_expire = 1 # Cancel order in 1min
+  @@minute_to_expire = 10 # Cancel order in 10mins
   @_ticker = nil
   @_balance = nil
 
