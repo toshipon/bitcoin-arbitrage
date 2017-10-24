@@ -6,12 +6,11 @@ require_relative 'lib/zaif'
 require_relative 'lib/bitflyer'
 
 def output msg
-  if ENV['SLACK_WEBHOOK_URL'].nil?
-    puts msg
-  else
+  unless ENV['SLACK_WEBHOOK_URL'].nil?
     slack = Slack::Incoming::Webhooks.new ENV['SLACK_WEBHOOK_URL']
     slack.post msg
   end
+  puts msg
 end
 
 def generate_stat c
@@ -70,9 +69,9 @@ def run
   output "================"
 
   clients = {
+    # :zaif => ZaifWrapper.new(ENV['ZAIF_KEY'], ENV['ZAIF_SECRET']),
+    :bitflyer => BitflyerWrapper.new(ENV['BITFLYER_KEY'], ENV['BITFLYER_SECRET']),
     :coincheck => CoincheckWrapper.new(ENV['COINCHECK_KEY'], ENV['COINCHECK_SECRET']),
-    :zaif => ZaifWrapper.new(ENV['ZAIF_KEY'], ENV['ZAIF_SECRET']),
-    :bitflyer => BitflyerWrapper.new(ENV['BITFLYER_KEY'], ENV['BITFLYER_SECRET'])
   }
 
   clients.each_value do |client|
@@ -103,8 +102,12 @@ end
 
 if ENV['RUN_ON_HEROKU'].nil?
   loop do
-    run
-    sleep(10*1) # 5mins
+    begin
+      run
+    rescue Exception => e
+      puts e.message
+    end
+    sleep(5*1) # 5mins
   end
 else
   run
