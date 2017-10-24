@@ -84,7 +84,7 @@ def run
     total_btc += client.get_balance_btc
     total_jpy += client.get_balance_jpy
   end
-  total_assets = total_jpy + total_btc * 630000
+  total_assets = total_jpy + total_btc * clients[:coincheck].last
   output "Total: #{total_btc}BTC,  #{total_jpy}JPY, Assets: #{total_assets}JPY"
 
   output "================"
