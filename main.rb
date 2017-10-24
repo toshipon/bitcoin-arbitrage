@@ -33,8 +33,8 @@ def trading bidc, askc, trade_amount
   if profit?(trade_amount, bidc.bid, askc.ask)
     output <<"EOS"
 *#{bidc.service} => #{askc.service}*
-Buying  #{trade_amount}BTC #{(bid*trade_amount).floor}JPY in #{bidc.service}
-Selling #{trade_amount}BTC #{(ask*trade_amount).floor}JPY in #{askc.service}
+Buying  #{trade_amount}BTC #{(bidc.bid*trade_amount).floor}JPY in #{bidc.service}
+Selling #{trade_amount}BTC #{(askc.ask*trade_amount).floor}JPY in #{askc.service}
 EOS
 
     if ENV['RUN_TRADING'] == 'on'
