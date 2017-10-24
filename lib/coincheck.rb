@@ -59,6 +59,15 @@ class CoincheckWrapper
     @client.create_orders(rate: bid, amount: trading_amount, order_type: "buy")
   end
 
+  def pending_orders
+    resp = JSON.parse(@client.read_orders.body)
+    if resp['success']
+      resp['orders']
+    else
+      []
+    end
+  end
+
   private
 
   def balance

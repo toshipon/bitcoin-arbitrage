@@ -55,6 +55,15 @@ class ZaifWrapper
     @client.create_orders(rate: bid, amount: trading_amount, order_type: "buy")
   end
 
+  def pending_orders
+    resp = @client.get_active_orders(:currency_pair => 'btc_jpy')
+    if resp['active_orders']
+      resp['active_orders']
+    else
+      []
+    end
+  end
+
   private
 
   def balance

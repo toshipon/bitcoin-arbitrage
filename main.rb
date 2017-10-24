@@ -20,6 +20,7 @@ def generate_stat c
    bid: #{c.bid}
    ask: #{c.ask}
    balance: #{c.get_balance_btc}BTC #{c.get_balance_jpy}JPY
+   pending: #{c.pending_orders.size}
 EOS
   result
 end

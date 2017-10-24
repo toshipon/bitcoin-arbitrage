@@ -81,6 +81,18 @@ class BitflyerWrapper
     )
   end
 
+  def pending_orders
+    resp = @private_client.child_orders(
+      product_code: 'BTC_JPY',
+      child_order_state: 'ACTIVE'
+    )
+    if resp.kind_of?(Array)
+      resp
+    else
+      []
+    end
+  end
+
   private
 
   def balance
