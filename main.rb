@@ -30,10 +30,7 @@ def profit? trade_amount, bid, ask
 end
 
 def trading bidc, askc, trade_amount
-  bid = bidc.bid
-  ask = bidc.ask
-
-  if profit?(trade_amount, bid, ask)
+  if profit?(trade_amount, bidc.bid, askc.ask)
     output <<"EOS"
 *#{bidc.service} => #{askc.service}*
 Buying  #{trade_amount}BTC #{(bid*trade_amount).floor}JPY in #{bidc.service}
@@ -41,8 +38,8 @@ Selling #{trade_amount}BTC #{(ask*trade_amount).floor}JPY in #{askc.service}
 EOS
 
     if ENV['RUN_TRADING'] == 'on'
-      unless bidc.has_jpy?(bid, trade_amount)
-        output "*#{bidc.service} wallet doesn't have #{(bid*trade_amount).floor}JPY*"
+      unless bidc.has_jpy?(bidc.bid, trade_amount)
+        output "*#{bidc.service} wallet doesn't have #{(bidc.bid*trade_amount).floor}JPY*"
         return
       end
 
@@ -51,13 +48,13 @@ EOS
         return
       end
 
-      bidc.buy(bid, trade_amount)
-      askc.sell(ask, trade_amount)
+      bidc.buy(bidc.bid, trade_amount)
+      askc.sell(askc.ask, trade_amount)
 
-      output "<!here> *Profit* #{((ask-bid) * trade_amount).floor}JPY"
+      output "<!here> *Profit* #{((askc.ask-bidc.bid) * trade_amount).floor}JPY"
     end
   else
-    output "*#{bidc.service} => #{askc.service}*: no enough profit #{((ask-bid) * trade_amount).floor}JPY"
+    output "*#{bidc.service} => #{askc.service}*: no enough profit #{((askc.ask-bidc.bid) * trade_amount).floor}JPY"
   end
 end
 
