@@ -1,7 +1,7 @@
 require 'bitflyer'
 
 class BitflyerWrapper
-  @@minute_to_expire = 10 # Cancel order in 10mins
+  @@minute_to_expire = 1 # Cancel order in 1min
   @_ticker = nil
   @_balance = nil
 
@@ -53,6 +53,10 @@ class BitflyerWrapper
 
   def ask
     ticker['best_ask']
+  end
+
+  def average_btc
+    (bid + ask)/2
   end
 
   def sell ask, trading_amount

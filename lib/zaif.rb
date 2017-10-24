@@ -43,8 +43,12 @@ class ZaifWrapper
     ticker['ask']
   end
 
+  def average_btc
+    (bid + ask)/2
+  end
+
   def sell ask, trading_amount
-    @client.create_orders(rate: ask, amount: trade_amount, order_type: "sell")
+    @client.create_orders(rate: ask, amount: trading_amount, order_type: "sell")
   end
 
   def buy bid, trading_amount

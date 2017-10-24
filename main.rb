@@ -38,7 +38,6 @@ def trading bidc, askc, trade_amount
 *#{bidc.service} => #{askc.service}*
 Buying  #{trade_amount}BTC #{(bid*trade_amount).floor}JPY in #{bidc.service}
 Selling #{trade_amount}BTC #{(ask*trade_amount).floor}JPY in #{askc.service}
-<!here> *Profit* #{((ask-bid) * trade_amount).floor}JPY
 EOS
 
     if ENV['RUN_TRADING'] == 'on'
@@ -54,6 +53,8 @@ EOS
 
       bidc.buy(bid, trade_amount)
       askc.sell(ask, trade_amount)
+
+      output "<!here> *Profit* #{((ask-bid) * trade_amount).floor}JPY"
     end
   else
     output "*#{bidc.service} => #{askc.service}*: no enough profit #{((ask-bid) * trade_amount).floor}JPY"
@@ -76,6 +77,17 @@ def run
   clients.each_value do |client|
     output generate_stat client
   end
+
+  total_btc = 0
+  total_jpy = 0
+  total_assets = 0
+  clients.each_value do |client|
+    total_btc += client.get_balance_btc
+    total_jpy += client.get_balance_jpy
+    total_assets += client.get_balance_jpy
+    total_assets += client.get_balance_btc * client.average_btc
+  end
+  output "Total: #{total_btc}BTC,  #{total_jpy}JPY, Assets: #{total_assets}JPY"
 
   output "================"
 
