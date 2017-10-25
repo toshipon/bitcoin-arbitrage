@@ -5,14 +5,20 @@ require_relative 'lib/coincheck'
 require_relative 'lib/zaif'
 require_relative 'lib/bitflyer'
 
-def output msg
+$msg = ""
+def log msg
+  $msg += "#{msg}\n"
+end
+
+def output
   unless ENV['SLACK_WEBHOOK_URL'].nil?
     Thread.new do
       slack = Slack::Incoming::Webhooks.new ENV['SLACK_WEBHOOK_URL']
-      slack.post msg
+      slack.post $msg
     end
   end
-  puts msg
+  puts $msg
+  $msg = ""
 end
 
 def generate_stat c
@@ -33,7 +39,7 @@ end
 
 def trading bidc, askc, trade_amount
   if profit?(trade_amount, bidc.bid, askc.ask)
-    output <<"EOS"
+    log <<"EOS"
 *#{bidc.service} => #{askc.service}*
 Buying  #{trade_amount}BTC #{(bidc.bid*trade_amount).floor}JPY in #{bidc.service}
 Selling #{trade_amount}BTC #{(askc.ask*trade_amount).floor}JPY in #{askc.service}
@@ -41,12 +47,12 @@ EOS
 
     if ENV['RUN_TRADING'] == 'on'
       unless bidc.has_jpy?(bidc.bid, trade_amount)
-        output "*#{bidc.service} wallet doesn't have #{(bidc.bid*trade_amount).floor}JPY*"
+        log "*#{bidc.service} wallet doesn't have #{(bidc.bid*trade_amount).floor}JPY*"
         return
       end
 
       unless askc.has_btc?(trade_amount)
-        output "*#{askc.service} wallet doesn't have #{trade_amount}BTC*"
+        log "*#{askc.service} wallet doesn't have #{trade_amount}BTC*"
         return
       end
 
@@ -59,19 +65,19 @@ EOS
       end
       threads.each { |t| t.join }
 
-      output "<!here> *Profit* #{((askc.ask-bidc.bid) * trade_amount).floor}JPY"
+      log "<!here> *Profit* #{((askc.ask-bidc.bid) * trade_amount).floor}JPY"
     end
   else
-    output "*#{bidc.service} => #{askc.service}*: no enough profit #{((askc.ask-bidc.bid) * trade_amount).floor}JPY"
+    log "*#{bidc.service} => #{askc.service}*: no enough profit #{((askc.ask-bidc.bid) * trade_amount).floor}JPY"
   end
 end
 
 def run
   trade_amount = ENV['TRADE_AMOUNT'].to_f
-  output "Trading amount: #{trade_amount}BTC"
-  output "Minimum volume: #{ENV['MIN_VOLUME_JPY']}JPY"
+  log "Trading amount: #{trade_amount}BTC"
+  log "Minimum volume: #{ENV['MIN_VOLUME_JPY']}JPY"
 
-  output "================"
+  log "================"
 
   clients = {
     # :zaif => ZaifWrapper.new(ENV['ZAIF_KEY'], ENV['ZAIF_SECRET']),
@@ -82,7 +88,7 @@ def run
   threads = []
   clients.each_value do |client|
     threads << Thread.new do
-      output generate_stat client
+      log generate_stat client
     end
   end
   threads.each { |t| t.join }
@@ -94,9 +100,9 @@ def run
     total_jpy += client.get_balance_jpy
   end
   total_assets = total_jpy + total_btc * clients[:coincheck].last
-  output "Total: #{total_btc}BTC,  #{total_jpy}JPY, Assets: #{total_assets}JPY"
+  log "Total: #{total_btc}BTC,  #{total_jpy}JPY, Assets: #{total_assets}JPY"
 
-  output "================"
+  log "================"
 
   threads = []
   clients.each do |bidk, bidc|
@@ -110,7 +116,8 @@ def run
   end
   threads.each { |t| t.join }
 
-  output "================"
+  log "================"
+  output
 end
 
 if ENV['RUN_ON_HEROKU'].nil?
