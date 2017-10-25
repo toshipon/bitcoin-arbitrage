@@ -12,10 +12,8 @@ end
 
 def output
   unless ENV['SLACK_WEBHOOK_URL'].nil?
-    Thread.new do
-      slack = Slack::Incoming::Webhooks.new ENV['SLACK_WEBHOOK_URL']
-      slack.post $msg
-    end
+    slack = Slack::Incoming::Webhooks.new ENV['SLACK_WEBHOOK_URL']
+    slack.post $msg
   end
   puts $msg
   $msg = ""
