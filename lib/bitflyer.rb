@@ -24,7 +24,7 @@ class BitflyerWrapper
   def get_balance_btc
     balance.each do |v|
       if v['currency_code'] == 'BTC'
-        return v['amount']
+        return v['available']
       end
     end
     0
@@ -37,7 +37,7 @@ class BitflyerWrapper
   def get_balance_jpy
     balance.each do |v|
       if v['currency_code'] == 'JPY'
-        return v['amount']
+        return v['available']
       end
     end
     0
