@@ -7,15 +7,17 @@ require_relative 'lib/bitflyer'
 
 def output msg
   unless ENV['SLACK_WEBHOOK_URL'].nil?
-    slack = Slack::Incoming::Webhooks.new ENV['SLACK_WEBHOOK_URL']
-    slack.post msg
+    Thread.new do
+      slack = Slack::Incoming::Webhooks.new ENV['SLACK_WEBHOOK_URL']
+      slack.post msg
+    end
   end
   puts msg
 end
 
 def generate_stat c
   result = <<"EOS"
-*#{c.service} BTC/JPY*
+*#{c.service}*
    bid: #{c.bid}
    ask: #{c.ask}
    balance: #{c.get_balance_btc}BTC #{c.get_balance_jpy}JPY
@@ -48,8 +50,14 @@ EOS
         return
       end
 
-      bidc.buy(bidc.bid, trade_amount)
-      askc.sell(askc.ask, trade_amount)
+      threads = []
+      threads << Thread.new do
+        bidc.buy(bidc.bid, trade_amount)
+      end
+      threads << Thread.new do
+        askc.sell(askc.ask, trade_amount)
+      end
+      threads.each { |t| t.join }
 
       output "<!here> *Profit* #{((askc.ask-bidc.bid) * trade_amount).floor}JPY"
     end
@@ -71,9 +79,13 @@ def run
     :coincheck => CoincheckWrapper.new(ENV['COINCHECK_KEY'], ENV['COINCHECK_SECRET']),
   }
 
+  threads = []
   clients.each_value do |client|
-    output generate_stat client
+    threads << Thread.new do
+      output generate_stat client
+    end
   end
+  threads.each { |t| t.join }
 
   total_btc = 0
   total_jpy = 0
@@ -86,13 +98,17 @@ def run
 
   output "================"
 
+  threads = []
   clients.each do |bidk, bidc|
     clients.each do |askk, askc|
       if bidk != askk
-        trading bidc, askc, trade_amount
+        threads << Thread.new do
+          trading bidc, askc, trade_amount
+        end
       end
     end
   end
+  threads.each { |t| t.join }
 
   output "================"
 end
@@ -104,7 +120,7 @@ if ENV['RUN_ON_HEROKU'].nil?
     rescue Exception => e
       puts e.message
     end
-    sleep(5*1) # 5mins
+    sleep(3*1) # 5mins
   end
 else
   run
