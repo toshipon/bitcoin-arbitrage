@@ -98,8 +98,8 @@ class BitflyerWrapper
     count = 0
     pending_orders.each do |order|
       d = DateTime.parse(order['child_order_date'])
-      if (DateTime.now - d) * 24 * 60 >= @minute_to_expire
-        if cancel_order order['id']
+      if ((DateTime.now - d) * 24 * 60).to_i >= @minute_to_expire
+        if cancel_order order['child_order_id']
           count += 1
         end
       end
@@ -108,7 +108,7 @@ class BitflyerWrapper
   end
 
   def cancel_order id
-    @private_client.cancel_parent_order(product_code: 'BTC_JPY', parent_order_id: id)
+    @private_client.cancel_child_order(product_code: 'BTC_JPY', child_order_id: id)
   end
 
   private

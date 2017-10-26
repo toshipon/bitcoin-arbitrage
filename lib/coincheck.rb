@@ -74,7 +74,7 @@ class CoincheckWrapper
     count = 0
     pending_orders.each do |order|
       d = DateTime.parse(order['created_at'])
-      if (DateTime.now - d) * 24 * 60 >= @minute_to_expire
+      if ((DateTime.now - d) * 24 * 60).to_i >= @minute_to_expire
         if cancel_order order['id']
           count += 1
         end

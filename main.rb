@@ -82,9 +82,9 @@ def run
   log "================\n"
 
   clients = {
-    # :zaif => ZaifWrapper.new(ENV['ZAIF_KEY'], ENV['ZAIF_SECRET'], ENV['MINUTE_TO_EXPIRE'].to_f),
-    :bitflyer => BitflyerWrapper.new(ENV['BITFLYER_KEY'], ENV['BITFLYER_SECRET'], ENV['MINUTE_TO_EXPIRE'].to_f),
-    :coincheck => CoincheckWrapper.new(ENV['COINCHECK_KEY'], ENV['COINCHECK_SECRET'], ENV['MINUTE_TO_EXPIRE'].to_f),
+    # :zaif => ZaifWrapper.new(ENV['ZAIF_KEY'], ENV['ZAIF_SECRET'], ENV['MINUTE_TO_EXPIRE'].to_i),
+    :bitflyer => BitflyerWrapper.new(ENV['BITFLYER_KEY'], ENV['BITFLYER_SECRET'], ENV['MINUTE_TO_EXPIRE'].to_i),
+    :coincheck => CoincheckWrapper.new(ENV['COINCHECK_KEY'], ENV['COINCHECK_SECRET'], ENV['MINUTE_TO_EXPIRE'].to_i),
   }
 
   threads = []
