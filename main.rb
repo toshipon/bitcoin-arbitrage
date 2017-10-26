@@ -5,9 +5,11 @@ require_relative 'lib/coincheck'
 require_relative 'lib/zaif'
 require_relative 'lib/bitflyer'
 
+$init_assets = 0
 $msg = ""
+
 def log msg
-  $msg += "#{msg}\n"
+  $msg += msg
 end
 
 def output
@@ -39,18 +41,20 @@ def trading bidc, askc, trade_amount
   if profit?(trade_amount, bidc.bid, askc.ask)
     log <<"EOS"
 *#{bidc.service} => #{askc.service}*
-Buying  #{trade_amount}BTC #{(bidc.bid*trade_amount).floor}JPY in #{bidc.service}
-Selling #{trade_amount}BTC #{(askc.ask*trade_amount).floor}JPY in #{askc.service}
+  Buying  #{trade_amount}BTC #{(bidc.bid*trade_amount).floor}JPY in #{bidc.service}
+  Selling #{trade_amount}BTC #{(askc.ask*trade_amount).floor}JPY in #{askc.service}
 EOS
 
     if ENV['RUN_TRADING'] == 'on'
+      profit = ((askc.ask-bidc.bid) * trade_amount).floor
+
       unless bidc.has_jpy?(bidc.bid, trade_amount)
-        log "*#{bidc.service} wallet doesn't have #{(bidc.bid*trade_amount).floor}JPY*"
+        log "  *#{bidc.service} wallet doesn't have #{(bidc.bid*trade_amount).floor}JPY*, profit: #{profit}JPY\n"
         return
       end
 
       unless askc.has_btc?(trade_amount)
-        log "*#{askc.service} wallet doesn't have #{trade_amount}BTC*"
+        log "  *#{askc.service} wallet doesn't have #{trade_amount}BTC*, profit: #{profit}JPY\n"
         return
       end
 
@@ -63,24 +67,24 @@ EOS
       end
       threads.each { |t| t.join }
 
-      log "<!here> *Profit* #{((askc.ask-bidc.bid) * trade_amount).floor}JPY"
+      log "<!here> *Profit* #{profit}JPY\n"
     end
   else
-    log "*#{bidc.service} => #{askc.service}*: no enough profit #{((askc.ask-bidc.bid) * trade_amount).floor}JPY"
+    log "*#{bidc.service} => #{askc.service}*: no enough profit #{((askc.ask-bidc.bid) * trade_amount).floor}JPY\n"
   end
 end
 
 def run
   trade_amount = ENV['TRADE_AMOUNT'].to_f
-  log "Trading amount: #{trade_amount}BTC"
-  log "Minimum volume: #{ENV['MIN_VOLUME_JPY']}JPY"
+  log "Trading amount: #{trade_amount}BTC\n"
+  log "Minimum volume: #{ENV['MIN_VOLUME_JPY']}JPY\n"
 
-  log "================"
+  log "================\n"
 
   clients = {
-    # :zaif => ZaifWrapper.new(ENV['ZAIF_KEY'], ENV['ZAIF_SECRET']),
-    :bitflyer => BitflyerWrapper.new(ENV['BITFLYER_KEY'], ENV['BITFLYER_SECRET']),
-    :coincheck => CoincheckWrapper.new(ENV['COINCHECK_KEY'], ENV['COINCHECK_SECRET']),
+    # :zaif => ZaifWrapper.new(ENV['ZAIF_KEY'], ENV['ZAIF_SECRET'], ENV['MINUTE_TO_EXPIRE'].to_f),
+    :bitflyer => BitflyerWrapper.new(ENV['BITFLYER_KEY'], ENV['BITFLYER_SECRET'], ENV['MINUTE_TO_EXPIRE'].to_f),
+    :coincheck => CoincheckWrapper.new(ENV['COINCHECK_KEY'], ENV['COINCHECK_SECRET'], ENV['MINUTE_TO_EXPIRE'].to_f),
   }
 
   threads = []
@@ -98,9 +102,16 @@ def run
     total_jpy += client.get_balance_jpy
   end
   total_assets = total_jpy + total_btc * clients[:coincheck].last
-  log "Total: #{total_btc}BTC,  #{total_jpy}JPY, Assets: #{total_assets}JPY"
+  if $init_assets == 0
+    $init_assets = total_assets
+  end
+  log <<"EOS"
+*Total:*
+  #{total_btc.floor(6)}BTC, #{total_jpy.floor}JPY
+*Assets:* #{total_assets.floor}JPY (#{(total_assets - $init_assets).floor})
+EOS
 
-  log "================"
+  log "================\n"
 
   threads = []
   clients.each do |bidk, bidc|
@@ -114,7 +125,19 @@ def run
   end
   threads.each { |t| t.join }
 
-  log "================"
+  threads = []
+  clients.each_value do |client|
+    threads << Thread.new do
+      cnt = client.cancel_expired_orders
+      if cnt > 0
+        log "*#{client.service}* #{cnt} order(s) canceled\n"
+      end
+    end
+  end
+  threads.each { |t| t.join }
+
+  log "================\n"
+
   output
 end
 
@@ -123,9 +146,11 @@ if ENV['RUN_ON_HEROKU'].nil?
     begin
       run
     rescue Exception => e
-      puts e.message
+      log e.message
+      log e.backtrace
+      output
     end
-    sleep(3*1) # 5mins
+    sleep(1) # 1sec
   end
 else
   run

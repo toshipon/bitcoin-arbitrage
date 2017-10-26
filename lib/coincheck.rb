@@ -1,11 +1,13 @@
+require "date"
 require 'ruby_coincheck_client'
 
 class CoincheckWrapper
   @_ticker = nil
   @_balance = nil
 
-  def initialize key, secret
+  def initialize key, secret, minute_to_expire
     @client = CoincheckClient.new(key, secret)
+    @minute_to_expire = minute_to_expire
   end
 
   def service
@@ -66,6 +68,24 @@ class CoincheckWrapper
     else
       []
     end
+  end
+
+  def cancel_expired_orders
+    count = 0
+    pending_orders.each do |order|
+      d = DateTime.parse(order['created_at'])
+      if (DateTime.now - d) * 24 * 60 >= @minute_to_expire
+        if cancel_order order['id']
+          count += 1
+        end
+      end
+    end
+    count
+  end
+
+  def cancel_order id
+    result = JSON.parse(@client.delete_orders(id: id).body)
+    result['success']
   end
 
   private

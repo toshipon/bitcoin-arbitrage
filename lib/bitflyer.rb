@@ -1,13 +1,14 @@
+require "date"
 require 'bitflyer'
 
 class BitflyerWrapper
-  @@minute_to_expire = 10 # Cancel order in 10mins
   @_ticker = nil
   @_balance = nil
 
-  def initialize key, secret
+  def initialize key, secret, minute_to_expire
     @private_client = Bitflyer.http_private_client(key, secret)
     @public_client = Bitflyer.http_public_client
+    @minute_to_expire = minute_to_expire
   end
 
   def service
@@ -66,7 +67,7 @@ class BitflyerWrapper
       side: 'SELL',
       price: ask,
       size: trading_amount,
-      minute_to_expire: @@minute_to_expire
+      minute_to_expire: @minute_to_expire
     )
   end
 
@@ -77,7 +78,7 @@ class BitflyerWrapper
       side: 'BUY',
       price: bid,
       size: trading_amount,
-      minute_to_expire: @@minute_to_expire
+      minute_to_expire: @minute_to_expire
     )
   end
 
@@ -91,6 +92,23 @@ class BitflyerWrapper
     else
       []
     end
+  end
+
+  def cancel_expired_orders
+    count = 0
+    pending_orders.each do |order|
+      d = DateTime.parse(order['child_order_date'])
+      if (DateTime.now - d) * 24 * 60 >= @minute_to_expire
+        if cancel_order order['id']
+          count += 1
+        end
+      end
+    end
+    count
+  end
+
+  def cancel_order id
+    @private_client.cancel_parent_order(product_code: 'BTC_JPY', parent_order_id: id)
   end
 
   private

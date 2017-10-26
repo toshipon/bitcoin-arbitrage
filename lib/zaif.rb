@@ -1,11 +1,13 @@
+require "date"
 require 'zaif'
 
 class ZaifWrapper
   @_ticker = nil
   @_balance = nil
 
-  def initialize key, secret
+  def initialize key, secret, minute_to_expire
     @client = Zaif::API.new(:api_key => key, :api_secret => secret)
+    @minute_to_expire = minute_to_expire
   end
 
   def service
@@ -62,6 +64,10 @@ class ZaifWrapper
     else
       []
     end
+  end
+
+  def cancel_expired_orders
+    0
   end
 
   private
