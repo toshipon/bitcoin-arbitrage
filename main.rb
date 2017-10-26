@@ -107,7 +107,7 @@ def run
   end
   log <<"EOS"
 *Total:*
-  #{total_btc.floor}BTC, #{total_jpy.floor}JPY
+  #{total_btc}BTC, #{total_jpy.floor}JPY
 *Assets:* #{total_assets.floor}JPY (#{(total_assets - $init_assets).floor})
 EOS
 
